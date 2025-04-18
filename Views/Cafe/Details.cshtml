@@ -1,0 +1,145 @@
+﻿@model Cafe
+@{
+    var menuItems = ViewBag.MenuItems as List<Menu>;
+    Layout = "_CafeDetail";
+}
+
+<h3 class="text-success">
+    <br />
+    @TempData["Success"]
+    <br />
+</h3>
+<div class="container mt-4">
+    <div class="row">
+        <section class="py-5 bg-white">
+            <div class="container">
+                <div class="row align-items-center">
+                    <!-- Image Box -->
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <div class="img-box">
+                            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded shadow-sm w-100" style="max-height: 400px; object-fit: cover;" />
+                        </div>
+                    </div>
+
+                    <!-- Detail Box -->
+                    <div class="col-md-6 detail-box">
+                        <h2 class="fw-bold">@Model.Name</h2>
+                        <p class="mb-1"><strong>Speciality:</strong> <span class="text-muted">@Model.Speciality</span></p>
+                        <p class="mb-1"><strong>Ratings:</strong> <span class="text-warning">@Model.Ratings ★</span></p>
+                        <p class="mb-1"><strong>Address:</strong> <span class="text-muted">@Model.Address, @Model.City</span></p>
+                        <p><strong>Description:</strong> @Model.Description</p>
+
+                        <!-- Google Map -->
+                        <div class="my-3 rounded overflow-hidden shadow-sm">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61094.98597140288!2d74.5841002!3d16.854282299999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc10c8187f060eb%3A0x37911f53cdc1ddb3!2sSangli%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1744952203555!5m2!1sen!2sin"
+                                    width="100%"
+                                    height="200"
+                                    style="border:0;"
+                                    allowfullscreen=""
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+
+                        <!-- Book Cafe Button -->
+                        <button type="button" class="btn btn-outline-primary px-4" data-bs-toggle="modal" data-bs-target="#bookCafeModal">
+                            Book Cafe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+            <!-- Bootstrap Modal -->
+        <!-- Book Cafe Modal -->
+        <div class="modal fade" id="bookCafeModal" tabindex="-1" aria-labelledby="bookCafeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form asp-action="Book" asp-controller="Cafe" method="post">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="bookCafeModalLabel">Book This Cafe</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <input type="hidden" name="CafeId" value="@Model.CafeId" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Booking Date</label>
+                                <input type="date" class="form-control" name="BookingDate" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Booking Time</label>
+                                <input type="time" class="form-control" name="BookingTime" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Number of People</label>
+                                <input type="number" class="form-control" name="NumberOfPeople" min="1" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Special Request</label>
+                                <textarea class="form-control" name="SpecialRequest" rows="3" placeholder="Any preferences or notes..."></textarea>
+                            </div>
+
+                            <!-- QR Code Section -->
+                            <div class="mb-3 text-center">
+                                <label class="form-label fw-bold">Pay ₹2000 Booking Fee</label>
+                                <div class="mb-2">
+                                    <img src="/images/QR.png" alt="QR Code" class="img-fluid rounded shadow-sm" style="max-height: 200px;" />
+                                </div>
+                                <p class="text-muted mb-1">Scan QR & enter the details below:</p>
+                                <input type="text" class="form-control mb-2" name="UID" placeholder="Your UPI ID / UID" required />
+                                <input type="text" class="form-control" name="TID" placeholder="Transaction ID" required />
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Submit Booking</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+    <br />
+    <br />
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h3 class="fw-bold">Menu Highlights</h3>
+                <p class="text-muted">Discover our featured dishes crafted with love and flavor</p>
+            </div>
+
+            <div class="row">
+                @foreach (var item in menuItems)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title fw-semibold">@item.Name</h5>
+                                <p class="card-text text-secondary">@item.Description</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-primary">₹@item.Price</span>
+                                    <small class="text-muted">@item.Category</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<br />
+<br />
+<br />

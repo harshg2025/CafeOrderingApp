@@ -1,0 +1,396 @@
+﻿@{
+	Layout = null;
+}
+@{
+    var userName = Context.Session.GetString("UserName");
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Basic -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Site Metas -->
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>CafeConnect</title>
+
+
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap.css" />
+
+    <!-- fonts style -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet">
+
+    <!-- font awesome style -->
+    <link href="~/css/font-awesome.min.css" rel="stylesheet" />
+    <!-- nice select -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha256-mLBIhmBvigTFWPSCtvdu6a76T+3Xyt+K571hupeFLg4=" crossorigin="anonymous" />
+    <!-- slidck slider -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css" integrity="sha256-UK1EiopXIL+KVhfbFa8xrmAWPeBjMVdvYMYkTAEv/HI=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css.map" integrity="undefined" crossorigin="anonymous" />
+
+
+    <!-- Custom styles for this template -->
+    <link href="~/css/style.css" rel="stylesheet" />
+    <!-- responsive style -->
+    <link href="~/css/responsive.css" rel="stylesheet" />
+
+</head>
+
+<body class="sub_page">
+
+    <div class="hero_area">
+        <!-- header section strats -->
+        <header class="header_section">
+            <div class="container-fluid">
+                <nav class="navbar navbar-expand-lg custom_nav-container">
+                    <a class="navbar-brand" href="/">
+                        <span>
+                            CafeConnect
+                        </span>
+                    </a>
+                    <div class="" id="">
+                        <div class="User_option">
+                            <!-- Login Link -->
+                            &nbsp;
+                            &nbsp;
+                            <button onclick="updateLocation()" class="btn btn-primary">
+                                <i class="fa fa-map-marker"></i> Update Location
+                            </button>
+
+                            <script>
+                                function updateLocation() {
+                                if (navigator.geolocation) {
+                                navigator.geolocation.getCurrentPosition(function (position) {
+                                const data = {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude
+                                };
+
+                                fetch('/User/UpdateLocation', {
+                                method: 'POST',
+                                headers: {
+                                'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(data)
+                                }).then(response => {
+                                if (response.ok) {
+                                alert('Location updated!');
+                                } else {
+                                alert('Failed to update location.');
+                                }
+                                }).catch(error => {
+                                console.error('Error updating location:', error);
+                                });
+
+                                }, function (error) {
+                                alert("Geolocation error: " + error.message);
+                                });
+                                } else {
+                                alert("Geolocation is not supported by this browser.");
+                                }
+                                }
+                            </script>
+
+                            <form class="form-inline" asp-controller="Cafe" asp-action="Search" method="get" id="searchForm">
+                                <input type="search" name="term" id="searchInput" placeholder="Search" class="form-control pt-3" style="display: none;" />
+                                <button class="btn nav_search-btn" type="button" id="toggleSearch">
+                                    <i class="fa fa-search pt-3" aria-hidden="true"></i>
+                                </button>
+                            </form>
+
+                            <script>
+                                const toggleSearch = document.getElementById('toggleSearch');
+                                const searchInput = document.getElementById('searchInput');
+                                const searchForm = document.getElementById('searchForm');
+
+                                let searchVisible = false;
+
+                                toggleSearch.addEventListener('click', function () {
+                                if (!searchVisible) {
+                                // Show the search input
+                                searchInput.style.display = 'inline-block';
+                                searchInput.focus();
+                                searchVisible = true;
+                                } else {
+                                // Submit the form
+                                if (searchInput.value.trim() !== "") {
+                                searchForm.submit();
+                                } else {
+                                alert("Please enter a search term.");
+                                }
+                                }
+                                });
+                            </script>
+                            @if (!string.IsNullOrEmpty(userName))
+                            {
+                                <a href="#" class="pt-3">
+                                    <p> 👤 @userName</p>
+                                </a>
+                                <a href="/User/Logout" class="btn btn-outline-danger btn-sm">
+                                    <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#" class="pt-3">
+                                    <p> 👤 Guest</p>
+                                </a>
+                            }
+
+                        </div>
+                        <div class="custom_menu-btn">
+                            <button onclick="openNav()">
+                                <img src="~/images/menu.png" alt="">
+                            </button>
+                        </div>
+                        <div id="myNav" class="overlay">
+                            <div class="overlay-content">
+                                <a href="index.html">Home</a>
+                                <a href="/home/about">About</a>
+
+                                @if (!string.IsNullOrEmpty(userName))
+                                {
+                                    <a href="/Order/MyBookings" class="btn btn-outline-primary">
+                                        <i class="fa fa-calendar-check"></i> My Orders
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="#" data-toggle="modal" data-target="#loginModal">
+                                        <i class="fa fa-user" aria-hidden="true"></i> <span>Login</span>
+                                    </a>
+
+                                    <!-- Or a Register link directly -->
+                                    <a href="#" data-toggle="modal" data-target="#registerModal">
+                                        <i class="fa fa-user-plus" aria-hidden="true"></i> <span>Register</span>
+                                    </a>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <!-- end header section -->
+    </div>
+
+
+    <!-- about section -->
+
+    <section class="about_section layout_padding">
+        <div class="container">
+            <div class="col-md-11 col-lg-10 mx-auto">
+                <div class="heading_container heading_center">
+                    <h2>
+                        About Us
+                    </h2>
+                </div>
+                <div class="box">
+                    <div class="col-md-7 mx-auto">
+                        <div class="img-box">
+                            <img src="~/images/about-img.jpg" class="box-img" alt="">
+                        </div>
+                    </div>
+                    <div class="detail-box">
+                        <p>
+                            Welcome to CafeConnect – your one-stop platform for discovering the best cafes around you!
+
+                            Whether you're looking for a peaceful place to work with strong WiFi, planning a birthday celebration, or simply craving a good cup of coffee, CafeConnect makes it easy to find exactly what you need.
+                            <br />
+                            <h3>
+                                🚀 What We Do
+
+                            </h3>
+                            <br />
+                            We connect people with cafes that fit their mood, purpose, and location. With detailed information like:
+                            <br />
+                            ✅ Specialties (WiFi, private seating, event-friendly spots)
+                            <br />
+
+                            📍 Location-based search to find the nearest cafes
+                            <br />
+
+                            ⭐ Ratings & Reviews from real users
+                            <br />
+
+                            📷 Cafe images and menu cards
+                            <br />
+
+                            📝 Easy table booking with special requests
+                            <br />
+
+                            💬 Feedback & Rating
+                            <br />
+
+                            … you get a complete picture before you even step out the door!
+                        </p>
+                        <a href="/cafe/nearby">
+                            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- end about section -->
+
+    <div class="footer_container">
+        <!-- info section -->
+        <section class="info_section ">
+            <div class="container">
+                <div class="contact_box">
+                    <a href="">
+                        <i class="fa fa-map-marker" aria-hidden="true"></i>
+                    </a>
+                    <a href="">
+                        <i class="fa fa-phone" aria-hidden="true"></i>
+                    </a>
+                    <a href="">
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <div class="info_links">
+                    <ul>
+                        <li class="active">
+                            <a href="index.html">
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="about.html">
+                                About
+                            </a>
+                        </li>
+                        <li>
+                            <a class="" href="blog.html">
+                                Blog
+                            </a>
+                        </li>
+                        <li>
+                            <a class="" href="testimonial.html">
+                                Testimonial
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="social_box">
+                    <a href="">
+                        <i class="fa fa-facebook" aria-hidden="true"></i>
+                    </a>
+                    <a href="">
+                        <i class="fa fa-twitter" aria-hidden="true"></i>
+                    </a>
+                    <a href="">
+                        <i class="fa fa-linkedin" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <!-- end info_section -->
+        <!-- footer section -->
+        <footer class="footer_section">
+            <div class="container">
+                <p>
+                    &copy; <span id="displayYear"></span> All Rights Reserved By
+                    <a href="https://html.design/">Free Html Templates</a><br>
+                    Distributed By: <a href="https://themewagon.com/">ThemeWagon</a>
+                </p>
+            </div>
+        </footer>
+        <!-- footer section -->
+        <!-- Login Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content auth-modal">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                        <button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-controller="User" asp-action="Login" method="post">
+                            <div class="form-group">
+                                <input type="email" name="email" class="form-control" placeholder="Email" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="password" class="form-control" placeholder="Password" required />
+                            </div>
+
+                            <!-- Hidden fields for lat/lng -->
+                            <input type="hidden" id="latitude" name="latitude" />
+                            <input type="hidden" id="longitude" name="longitude" />
+
+                            <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        </form>
+
+                        @if (!string.IsNullOrEmpty(ViewBag.Message as string))
+                        {
+                            <p class="text-danger mt-2">@ViewBag.Message</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Modal -->
+        <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content auth-modal">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="registerModalLabel">Register</h5>
+                        <button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-controller="User" asp-action="Register" method="post">
+                            <div class="form-group">
+                                <input type="text" name="UserName" class="form-control" placeholder="Username" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" name="Email" class="form-control" placeholder="Email" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="Password" class="form-control" placeholder="Password" required />
+                            </div>
+                            @* <div class="form-group"> *@
+                            @*     <input type="number" name="Latitude" step="any" class="form-control" placeholder="Latitude" /> *@
+                            @* </div> *@
+                            @* <div class="form-group" > *@
+                            @*     <input type="number" name="Longitude" step="any" class="form-control" placeholder="Longitude" /> *@
+                            @* </div> *@
+                            <button type="submit" class="btn btn-success btn-block">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- jQery -->
+    <script src="~/js/jquery-3.4.1.min.js"></script>
+    <!-- bootstrap js -->
+    <script src="~/js/bootstrap.js"></script>
+    <!-- slick  slider -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.js"></script>
+    <!-- nice select -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha256-Zr3vByTlMGQhvMfgkQ5BtWRSKBGa2QlspKYJnkjZTmo=" crossorigin="anonymous"></script>
+    <!-- custom js -->
+    <script src="~/js/custom.js"></script>
+
+
+</body>
+
+</html>

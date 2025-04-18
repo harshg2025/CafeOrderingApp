@@ -1,0 +1,51 @@
+﻿@model List<Cafe>
+@{
+    Layout = "_Cafe";
+}
+<br />
+<br />
+
+<div class="container">
+    @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+    {
+        <div class="mb-4">
+            <h4 class="text-muted">Search Results for: <em>@ViewBag.SearchTerm</em></h4>
+        </div>
+    }
+
+    <h2 class="mb-4 fw-bold">Nearby Cafes</h2>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        <div class="alert alert-warning">
+            @ViewBag.Message
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var cafe in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <img src="@cafe.ImageUrl" class="card-img-top rounded-top-4" alt="@cafe.Name" style="height: 200px; object-fit: cover;" />
+                        <div class="card-body">
+                            <h5 class="card-title">@cafe.Name</h5>
+                            <p class="card-text text-muted small">@cafe.Description</p>
+
+                            <ul class="list-unstyled small mb-3">
+                                <li><strong>Speciality:</strong> @cafe.Speciality</li>
+                                <li><strong>Rating:</strong> ⭐ @cafe.Ratings</li>
+                                <li><strong>Address:</strong> @cafe.Address, @cafe.City</li>
+                            </ul>
+
+                            <a href="@Url.Action("Details", "Cafe", new { id = cafe.CafeId })" class="btn btn-outline-primary w-100">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
