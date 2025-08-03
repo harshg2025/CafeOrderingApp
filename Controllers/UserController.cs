@@ -1,18 +1,20 @@
 ﻿using CafeOrderingApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 
 namespace CafeOrderingApp.Controllers
 {
     public class UserController : Controller
     {
-        private readonly string _connectionString = "Server=SUPRIKA;Database=CafeBookingApp;Trusted_Connection=True;TrustServerCertificate=True";
+        private readonly string _connectionString = "Server=LAPTOP-NEJRIJP3;Database=CafeBookingApp;Trusted_Connection=True;TrustServerCertificate=True";
 
         // Registration Form
         [HttpGet]
-        public IActionResult Register() => View("Index","Home");
+        public IActionResult Register() 
+        {
+            TempData["message"] = "Invalid email or password please register to login.";
+            return RedirectToAction("Index", "Home"); 
+        }
 
         // Handle Registration
         [HttpPost]
@@ -85,9 +87,10 @@ namespace CafeOrderingApp.Controllers
                 HttpContext.Session.SetInt32("UserId", user.UserId);
                 return RedirectToAction("Index", "Home");
             }
+            
 
-            ViewBag.Message = "Invalid email or password.";
-            return View();
+                
+            return RedirectToAction("Register","User");
         }
 
         public IActionResult Logout()

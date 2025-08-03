@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
     Layout = null;
+
 }
 @{
     var userName = Context.Session.GetString("UserName");
@@ -98,6 +99,7 @@
 </head>
 
 <body>
+    <h3 class="text-danger card-body">@TempData["message"]</h3>
 
     <div class="hero_area">
         <!-- header section strats -->
@@ -206,7 +208,7 @@
                         </div>
                         <div id="myNav" class="overlay">
                             <div class="overlay-content">
-                                <a href="index.html">Home</a>
+                                <a href="/home/index">Home</a>
                                 <a href="/home/about">About</a>
                                 
                                     @if (!string.IsNullOrEmpty(userName))

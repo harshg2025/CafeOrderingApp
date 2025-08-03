@@ -9,7 +9,7 @@ namespace CafeOrderingApp.Controllers
 
     public class CafeController : Controller
     {
-        private readonly string _connectionString = "Server=SUPRIKA;Database=CafeBookingApp;Trusted_Connection=True;TrustServerCertificate=True";
+        private readonly string _connectionString = "Server=LAPTOP-NEJRIJP3;Database=CafeBookingApp;Trusted_Connection=True;TrustServerCertificate=True";
 
         public IActionResult Nearby()
         {
@@ -180,7 +180,7 @@ namespace CafeOrderingApp.Controllers
             if (userId == null)
             {
                 TempData["Error"] = "Please login to book a cafe.";
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("Index", "Home");
             }
 
             order.UserId = userId.Value;
@@ -214,6 +214,141 @@ namespace CafeOrderingApp.Controllers
 
             TempData["Success"] = "Your booking has been submitted!";
             return RedirectToAction("Details", new { id = order.CafeId });
+        }
+
+        // Display List of Cafes
+        public IActionResult Index()
+        {
+            List<Cafe> cafes = new List<Cafe>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Cafe";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    cafes.Add(new Cafe
+                    {
+                        CafeId = (int)reader["CafeId"],
+                        Name = reader["Name"].ToString(),
+                        Address = reader["Address"].ToString(),
+                        Description = reader["Description"].ToString(),
+                        Latitude = reader["Latitude"] != DBNull.Value ? (double)reader["Latitude"] : 0,
+                        Longitude = reader["Longitude"] != DBNull.Value ? (double)reader["Longitude"] : 0,
+                        ImageUrl = reader["ImageUrl"]?.ToString()
+                    });
+                }
+                reader.Close();
+            }
+
+            return View(cafes);
+        }
+
+        // GET: Create Cafe
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Create Cafe
+        [HttpPost]
+        public IActionResult Create(Cafe cafe)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = @"INSERT INTO Cafe (Name, Description, Address, City, Latitude, Longitude, ImageUrl)
+                                 VALUES (@Name, @Description, @Address, @City, @Latitude, @Longitude, @ImageUrl)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Name", cafe.Name);
+                cmd.Parameters.AddWithValue("@Description", cafe.Description);
+                cmd.Parameters.AddWithValue("@Address", cafe.Address);
+                cmd.Parameters.AddWithValue("@City", cafe.Address); // You can correct this if you have a City field separately
+                cmd.Parameters.AddWithValue("@Latitude", cafe.Latitude);
+                cmd.Parameters.AddWithValue("@Longitude", cafe.Longitude);
+                cmd.Parameters.AddWithValue("@ImageUrl", cafe.ImageUrl ?? (object)DBNull.Value);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            TempData["Success"] = "Cafe Added Successfully!";
+            return RedirectToAction("Index");
+        }
+
+        // GET: Edit Cafe
+        public IActionResult Edit(int id)
+        {
+            Cafe cafe = new Cafe();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Cafe WHERE CafeId = @CafeId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@CafeId", id);
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    cafe.CafeId = (int)reader["CafeId"];
+                    cafe.Name = reader["Name"].ToString();
+                    cafe.Address = reader["Address"].ToString();
+                    cafe.Description = reader["Description"].ToString();
+                    cafe.Latitude = reader["Latitude"] != DBNull.Value ? (double)reader["Latitude"] : 0;
+                    cafe.Longitude = reader["Longitude"] != DBNull.Value ? (double)reader["Longitude"] : 0;
+                    cafe.ImageUrl = reader["ImageUrl"]?.ToString();
+                }
+                reader.Close();
+            }
+
+            return View(cafe);
+        }
+
+        // POST: Update Cafe
+        [HttpPost]
+        public IActionResult Edit(Cafe cafe)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = @"UPDATE Cafe 
+                                 SET Name = @Name, Description = @Description, Address = @Address, City = @City,
+                                     Latitude = @Latitude, Longitude = @Longitude, ImageUrl = @ImageUrl
+                                 WHERE CafeId = @CafeId";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@CafeId", cafe.CafeId);
+                cmd.Parameters.AddWithValue("@Name", cafe.Name);
+                cmd.Parameters.AddWithValue("@Description", cafe.Description);
+                cmd.Parameters.AddWithValue("@Address", cafe.Address);
+                cmd.Parameters.AddWithValue("@City", cafe.Address); // Correct if City is different field
+                cmd.Parameters.AddWithValue("@Latitude", cafe.Latitude);
+                cmd.Parameters.AddWithValue("@Longitude", cafe.Longitude);
+                cmd.Parameters.AddWithValue("@ImageUrl", cafe.ImageUrl ?? (object)DBNull.Value);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            TempData["Success"] = "Cafe Updated Successfully!";
+            return RedirectToAction("Index");
+        }
+
+        // POST: Delete Cafe
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "DELETE FROM Cafe WHERE CafeId = @CafeId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@CafeId", id);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            TempData["Success"] = "Cafe Deleted Successfully!";
+            return RedirectToAction("Index");
         }
 
 
