@@ -1,0 +1,48 @@
+﻿@model List<CafeOrderingApp.Models.Cafe>
+
+@{
+    ViewData["Title"] = "Cafe List";
+}
+
+<div class="container mt-4">
+    <h2>Cafes</h2>
+
+    <a class="btn btn-primary mb-3" asp-action="Create">Add New Cafe</a>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Summary</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cafe in Model)
+            {
+                <tr>
+                    <td>@cafe.Name</td>
+                    <td>@cafe.Address</td>
+                    <td>@cafe.Description</td>
+                    <td>@cafe.Latitude</td>
+                    <td>@cafe.Longitude</td>
+                    <td>
+                        <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@cafe.CafeId">Edit</a>
+                        <form asp-action="Delete" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@cafe.CafeId" />
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

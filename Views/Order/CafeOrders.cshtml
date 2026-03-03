@@ -1,0 +1,81 @@
+﻿@model List<CafeOrderingApp.Models.Order>
+
+<div class="d-flex align-items-center justify-content-between">
+    <h2>Cafe Orders</h2>
+    <li class="btn btn-outline-primary">
+        <a class="nav-link active fw-bolder fs-4" asp-controller="Cafe" asp-action="Index">Manage Cafes</a>
+    </li>
+</div>
+
+
+<div class="mb-4">
+    <form method="get" asp-action="CafeOrders">
+        <div class="row">
+            <input type="hidden" name="cafeId" value="@ViewBag.CafeId" />
+
+            <div class="col-md-4">
+                <label for="filterDate">Filter by Date:</label>
+                <input type="date" name="filterDate" value="@ViewBag.FilterDate" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label for="cafeName">Filter by Cafe Name:</label>
+                <input type="text" name="cafeName" value="@ViewBag.CafeName" class="form-control" placeholder="Enter Cafe Name..." />
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<hr />
+
+<h4>Analytics</h4>
+<p><strong>Total Orders:</strong> @ViewBag.TotalOrders</p>
+<p><strong>Pending Orders:</strong> @ViewBag.PendingOrders</p>
+
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Order Id</th>
+            <th>Booking Date</th>
+            <th>Booking Time</th>
+            <th>Cafe Name</th>
+            <th>Number of People</th>
+            <th>Status</th>
+            <th>Special Request</th>
+            <th>Update Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.BookingDate.ToShortDateString()</td>
+                <td>@order.BookingTime</td>
+                <td>@order.CafeName</td>
+                <td>@order.NumberOfPeople</td>
+                <td>@order.Status</td>
+                <td>@order.SpecialRequest</td>
+                <td>
+                    <form asp-action="UpdateOrderStatus" method="post">
+                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                        <select name="newStatus" class="form-control" required>
+                            <option value="">Select Status</option>
+                            <option value="Pending" selected="@(order.Status == "Pending" ? "selected" : null)">Pending</option>
+                            <option value="Confirmed" selected="@(order.Status == "Confirmed" ? "selected" : null)">Confirmed</option>
+                            <option value="Completed" selected="@(order.Status == "Completed" ? "selected" : null)">Completed</option>
+                            <option value="Cancelled" selected="@(order.Status == "Cancelled" ? "selected" : null)">Cancelled</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-success mt-2">Update</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

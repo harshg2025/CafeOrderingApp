@@ -1,0 +1,54 @@
+@{
+    ViewData["Title"] = "Admin Panel";
+    Layout = "_Cafe";
+}
+
+<div class="container py-5 mt-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center position-relative">
+            <h1 class="display-4 font-weight-bold">System Admin Panel</h1>
+            <p class="lead text-muted">Monitor platform processes and perform CRUD operations on cafes</p>
+            <a href="@Url.Action("Logout", "Admin")" class="btn btn-outline-danger position-absolute" style="top: 0; right: 15px;">
+                <i class="fa fa-sign-out"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <!-- Cafe Management Card -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg border-0 h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-5">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                        <i class="fa fa-coffee fa-2x"></i>
+                    </div>
+                    <h3 class="card-title font-weight-bold">Manage Cafes</h3>
+                    <p class="card-text text-muted mb-4">
+                        Control all the cafes in the system. Perform full CRUD operations (Create, Read, Update, Delete) on cafe profiles, locations, and details.
+                    </p>
+                    <a href="@Url.Action("Index", "Cafe")" class="btn btn-primary btn-lg px-5 border-0" style="border-radius: 50px;">
+                        Cafe Database
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders & Process Monitoring Card -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg border-0 h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-5">
+                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                        <i class="fa fa-tasks fa-2x"></i>
+                    </div>
+                    <h3 class="card-title font-weight-bold">Monitor Processes</h3>
+                    <p class="card-text text-muted mb-4">
+                        Monitor system processes including order processing, table bookings, and customer feedback. Filter and update statuses in real-time.
+                    </p>
+                    <a href="@Url.Action("CafeOrders", "Order")" class="btn btn-success btn-lg px-5 border-0" style="border-radius: 50px;">
+                        View Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

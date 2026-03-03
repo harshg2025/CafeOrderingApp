@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Admin Login";
+    Layout = "_Cafe"; 
+}
+
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                <div class="card-header bg-primary text-white text-center" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                    <h3 class="mb-0 py-2"><i class="fa fa-lock"></i> Admin Login</h3>
+                </div>
+                <div class="card-body p-5">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger text-center">@ViewBag.Error</div>
+                    }
+                    <form asp-action="Login" method="post">
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold">Admin ID</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                </div>
+                                <input type="text" name="username" class="form-control" placeholder="Enter Admin Username" required />
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold">Password</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-key"></i></span>
+                                </div>
+                                <input type="password" name="password" class="form-control" placeholder="Enter Admin Password" required />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg mt-4" style="border-radius: 50px;">
+                            Login to Dashboard <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="text-muted small">Default Credentials: Harsh / Harsh123</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
